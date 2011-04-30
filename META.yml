@@ -1,0 +1,37 @@
+---
+abstract: 'Phone number information for France (+33)'
+author:
+  - 'Olivier Mengué <dolmen@cpan.org>'
+build_requires:
+  Test::More: 0.94
+configure_requires:
+  File::Spec: 0
+  Module::Build: 0.36
+dynamic_config: 1
+generated_by: 'Module::Build version 0.38, CPAN::Meta::Converter version 2.110580'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Number-Phone-FR
+provides:
+  Number::Phone::FR:
+    file: lib/Number/Phone/FR.pm
+    version: 0.01
+  Number::Phone::FR::Full:
+    file: lib/Number/Phone/FR/Full.pm
+    version: 0.0111101
+  Number::Phone::FR::Simple:
+    file: lib/Number/Phone/FR.pm
+    version: 0
+requires:
+  Carp: 0
+  Number::Phone: 1.7004
+  Scalar::Util: 0
+  parent: 0.221
+  perl: 5.008001
+resources:
+  bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR
+  homepage: https://github.com/dolmen/Number-Phone-FR-perl
+  repository: https://github.com/dolmen/Number-Phone-FR-perl.git
+version: 0.0111101

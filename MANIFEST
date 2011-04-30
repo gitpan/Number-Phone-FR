@@ -1,0 +1,20 @@
+Build.PL
+Changes
+examples/verif-num.pl
+inc/Build/Author.pm
+inc/Build/Number-Phone-FR-Full.tt2
+lib/Number/Phone/FR.pm
+lib/Number/Phone/FR/Full.pm
+MANIFEST			This list of files
+MANIFEST.SKIP
+META.json
+META.yml
+t/08-static.t
+t/10-one.t
+t/11-full.t
+t/12-simple.t
+t/20-format.t
+t/21-format-full.t
+t/30-operator-full.t
+t/40-impl.t
+t/lib/Numeros.pm
