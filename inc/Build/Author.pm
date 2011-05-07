@@ -210,8 +210,8 @@ sub ACTION_parse
 	# Force a "./Build" deprecation (redo "perl Build.PL")
 	# as the distribution must be rebuilt
         unlink $_ for grep { -e $_ } qw(Build Build.bat Build.COM build.com BUILD.COM);
-        print "Version updated @{ +$self->dist_version } => $version\n";
-        print "Build script removed. Redo 'perl Build.PL'.\n";
+        print 'Version updated ', $self->dist_version, " => $version\n",
+              "Build script removed. Redo 'perl Build.PL'.\n";
     }
 }
 
@@ -228,6 +228,13 @@ sub ACTION_update
 {
     my $self = shift;
     $self->SUPER::depends_on(qw'fetch parse');
+}
+
+sub ACTION_tag
+{
+    my $self = shift;
+    print 'git tag -a -m "CPAN release '.$self->dist_version.'" release-'.$self->dist_version."\n";
+    print "git push github --tags\n";
 }
 
 1;

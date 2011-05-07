@@ -9,6 +9,10 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.json
 META.yml
+t/00-compile.t
+t/01-load-FR.t
+t/02-load-Simple.t
+t/03-load-Full.t
 t/08-static.t
 t/10-one.t
 t/11-full.t

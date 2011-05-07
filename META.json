@@ -16,7 +16,8 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "Test::More" : "0.94"
+            "Test::More" : "0.94",
+            "Test::NoWarnings" : "1.02"
          }
       },
       "configure" : {
@@ -38,11 +39,11 @@
    "provides" : {
       "Number::Phone::FR" : {
          "file" : "lib/Number/Phone/FR.pm",
-         "version" : "0.01"
+         "version" : "0.02"
       },
       "Number::Phone::FR::Full" : {
          "file" : "lib/Number/Phone/FR/Full.pm",
-         "version" : "0.0111101"
+         "version" : "0.0211122"
       },
       "Number::Phone::FR::Simple" : {
          "file" : "lib/Number/Phone/FR.pm",
@@ -59,5 +60,5 @@
          "url" : "https://github.com/dolmen/Number-Phone-FR-perl.git"
       }
    },
-   "version" : "0.0111101"
+   "version" : "0.0211122"
 }

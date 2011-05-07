@@ -4,6 +4,7 @@ author:
   - 'Olivier Mengué <dolmen@cpan.org>'
 build_requires:
   Test::More: 0.94
+  Test::NoWarnings: 1.02
 configure_requires:
   File::Spec: 0
   Module::Build: 0.36
@@ -17,10 +18,10 @@ name: Number-Phone-FR
 provides:
   Number::Phone::FR:
     file: lib/Number/Phone/FR.pm
-    version: 0.01
+    version: 0.02
   Number::Phone::FR::Full:
     file: lib/Number/Phone/FR/Full.pm
-    version: 0.0111101
+    version: 0.0211122
   Number::Phone::FR::Simple:
     file: lib/Number/Phone/FR.pm
     version: 0
@@ -34,4 +35,4 @@ resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR
   homepage: https://github.com/dolmen/Number-Phone-FR-perl
   repository: https://github.com/dolmen/Number-Phone-FR-perl.git
-version: 0.0111101
+version: 0.0211122
