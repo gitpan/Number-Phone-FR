@@ -43,7 +43,7 @@
       },
       "Number::Phone::FR::Full" : {
          "file" : "lib/Number/Phone/FR/Full.pm",
-         "version" : "0.0211122"
+         "version" : "0.0211140"
       },
       "Number::Phone::FR::Simple" : {
          "file" : "lib/Number/Phone/FR.pm",
@@ -60,5 +60,5 @@
          "url" : "https://github.com/dolmen/Number-Phone-FR-perl.git"
       }
    },
-   "version" : "0.0211122"
+   "version" : "0.0211140"
 }
