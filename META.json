@@ -4,7 +4,7 @@
       "Olivier Mengué <dolmen@cpan.org>"
    ],
    "dynamic_config" : 1,
-   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110580",
+   "generated_by" : "Module::Build version 0.38, CPAN::Meta::Converter version 2.110930001",
    "license" : [
       "perl_5"
    ],
@@ -39,11 +39,11 @@
    "provides" : {
       "Number::Phone::FR" : {
          "file" : "lib/Number/Phone/FR.pm",
-         "version" : "0.02"
+         "version" : "0.03"
       },
       "Number::Phone::FR::Full" : {
          "file" : "lib/Number/Phone/FR/Full.pm",
-         "version" : "0.0211185"
+         "version" : "0.0311185"
       },
       "Number::Phone::FR::Simple" : {
          "file" : "lib/Number/Phone/FR.pm",
@@ -60,5 +60,5 @@
          "url" : "https://github.com/dolmen/Number-Phone-FR-perl.git"
       }
    },
-   "version" : "0.0211185"
+   "version" : "0.0311185"
 }

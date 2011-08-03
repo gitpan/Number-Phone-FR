@@ -7,7 +7,7 @@ package Number::Phone::FR;
 # $VERSION is limited to 2 digits after the dot
 # Other digits are reserved for ARCEP data versonning
 # in Number::Phone::FR::Full
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 use Number::Phone;
 use parent 'Number::Phone';
@@ -335,28 +335,34 @@ Number::Phone::FR - Phone number information for France (+33)
 
 =head1 SYNOPSIS
 
-    # Use Number::Phone::FR through Number::Phone
+Use C<Number::Phone::FR> through C<L<Number::Phone>>:
+
     use Number::Phone;
     my $num = Number::Phone->new('+33148901515');
 
-    # Select a particular implementation
+Select a particular implementation of C<Number::Phone::FR> for this package:
+
     use Number::Phone::FR 'Full';
     my $num = Number::Phone->new('+33148901515');
 
     use Number::Phone::FR 'Simple';
     my $num = Number::Phone->new('+33148901515');
 
+One-liners:
 
-    # One-liners
     perl -MNumber::Phone "-Esay Number::Phone->new(q!+33148901515!)->format"
     perl -MNumber::Phone::FR=Full "-Esay Number::Phone->new(q!+33148901515!)->operator"
     perl -MNumber::Phone::FR=Full "-Esay Number::Phone::FR->new(q!3949!)->operator"
 
 =head1 DESCRIPTION
 
-This is a subclass of L<Number::Phone> that provide information for phone numbers in France.
+This is a subclass of L<Number::Phone> that provides information for phone
+numbers in France.
 
-Two implementation are provided:
+I<B<Note:> Cette documentation est E<eacute>galement disponible en
+franE<ccedil>ais dans L<POD2::FR::Number::Phone::FR>.>
+
+Two implementations are provided:
 
 =over 4
 
@@ -376,6 +382,22 @@ Number::Phone::FR package with the selected implementation.
 All Number::Phone::FR objects created from this package (either indirectly
 with Number::Phone->new or explicitely with Number::Phone::FR->new) will be
 created using this implementation.
+
+=head1 DATA SOURCES
+
+L<http://www.arcep.fr/index.php?id=8992>
+
+It looks like ARCEP publishes updates about twice a month.
+
+The tools for rebuilding the Number-Phone-FR CPAN distribution with updated
+data are included in the distribution:
+
+    perl Build.PL
+    ./Build update
+    perl Build.PL
+    ./Build
+    ./Build test
+    ./Build dist
 
 =head1 VERSIONNING
 
@@ -398,21 +420,6 @@ C<m.nn> is the versionning of the code. Common for the two packages.
 
 C<yyddd> is the versionning of the ARCEP data.
 
-=head1 DATA SOURCES
-
-L<http://www.arcep.fr/index.php?id=8992>
-
-It looks like ARCEP publishes updates about every month.
-
-The tools for rebuilding the Number-Phone-FR CPAN distribution with updated
-data are included in the distribution:
-
-    perl Build.PL
-    ./Build update
-    perl Build.PL
-    ./Build
-    ./Build test
-
 =head1 SEE ALSO
 
 =over 4
@@ -429,11 +436,16 @@ L<Number::Phone>
 
 =head1 SUPPORT
 
+(english or french)
+
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
+
+The latest available source code (work in progress) is published on GitHub:
+L<https://github.com/dolmen/Number-Phone-FR>
 
 =head1 AUTHOR
 
-Olivier MenguE<eacute>, C<<<dolmen@cpan.org>>>
+Olivier MenguE<eacute>, L<mailto:dolmen@cpan.org>
 
 =head1 COPYRIGHT AND LICENSE
 

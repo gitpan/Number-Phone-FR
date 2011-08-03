@@ -1,5 +1,10 @@
 Revision history for Number::Phone::FR.
 
+0.0311185    2011-08-03    DOLMEN (Olivier Mengué)
+        Minor rework of the documentation.
+        Added documentation in french.
+        ARCEP data: 2011-07-04.
+
 0.0211185    2011-07-09    DOLMEN (Olivier Mengué)
         ARCEP data: 2011-07-04.
 
@@ -7,6 +12,9 @@ Revision history for Number::Phone::FR.
         The French Perl Workshop release. See the slides of my presentation
           about N::P::FR internals: http://o.mengue.free.fr/presentations/2011-fpw/Number-Phone-FR_implementation.pdf
         ARCEP data: 2011-06-21.
+
+0.0211140    2011-05-29    DOLMEN (Olivier Mengué)
+	ARCEP data: 2011-05-20.
 
 0.0211122    2011-05-07    DOLMEN (Olivier Mengué)
 	Full.pm: Fixed regexp anchoring in operator lookup.

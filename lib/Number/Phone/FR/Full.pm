@@ -6,7 +6,7 @@ package Number::Phone::FR::Full;
 
 our $VERSION;
 BEGIN {
-    $VERSION = '0.0211185';
+    $VERSION = '0.0311185';
 }
 
 use Number::Phone::FR;
