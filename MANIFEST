@@ -5,6 +5,7 @@ inc/Build/Author.pm
 inc/Build/Number-Phone-FR-Full.tt2
 lib/Number/Phone/FR.pm
 lib/Number/Phone/FR/Full.pm
+lib/POD2/FR/Number/Phone/FR.pod
 MANIFEST			This list of files
 MANIFEST.SKIP
 META.json

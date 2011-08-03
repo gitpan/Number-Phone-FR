@@ -18,10 +18,10 @@ name: Number-Phone-FR
 provides:
   Number::Phone::FR:
     file: lib/Number/Phone/FR.pm
-    version: 0.03
+    version: 0.04
   Number::Phone::FR::Full:
     file: lib/Number/Phone/FR/Full.pm
-    version: 0.0311185
+    version: 0.0411185
   Number::Phone::FR::Simple:
     file: lib/Number/Phone/FR.pm
     version: 0
@@ -33,6 +33,6 @@ requires:
   perl: 5.008001
 resources:
   bugtracker: http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR
-  homepage: https://github.com/dolmen/Number-Phone-FR-perl
-  repository: https://github.com/dolmen/Number-Phone-FR-perl.git
-version: 0.0311185
+  homepage: https://github.com/dolmen/p5-Number-Phone-FR
+  repository: https://github.com/dolmen/p5-Number-Phone-FR.git
+version: 0.0411185

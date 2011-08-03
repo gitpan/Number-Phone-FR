@@ -7,7 +7,7 @@ package Number::Phone::FR;
 # $VERSION is limited to 2 digits after the dot
 # Other digits are reserved for ARCEP data versonning
 # in Number::Phone::FR::Full
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 use Number::Phone;
 use parent 'Number::Phone';
@@ -441,7 +441,7 @@ L<Number::Phone>
 L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Number-Phone-FR>
 
 The latest available source code (work in progress) is published on GitHub:
-L<https://github.com/dolmen/Number-Phone-FR>
+L<https://github.com/dolmen/p5-Number-Phone-FR>
 
 =head1 AUTHOR
 
