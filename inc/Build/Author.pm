@@ -31,6 +31,7 @@ BEGIN {
     push @ISA, 'Module::Build';
 }
 
+
 sub WOPNUM() { 'wopnum.xls' }
 
 sub new
@@ -72,7 +73,7 @@ sub _fetch
     $ua->agent($self->dist_name.'/'.$self->dist_name);
     $ua->env_proxy;
     my $rsp = $ua->get($url, ':content_file' => $file);
-    die "$file: $rsp->status_line\n" unless $rsp->is_success;
+    die "$file: @{[ $rsp->status_line ]}\n" unless $rsp->is_success;
     my $t = HTTP::Date::str2time($rsp->header('Last-Modified'));
     utime $t, $t, $file;
 
@@ -108,20 +109,18 @@ sub ACTION_fetch
 
 sub _add_op
 {
-    my ($ops, $op, $num) = @_;
+    my ($op_num, $op, $num) = @_;
 
     die "Le code opérateur devrait être sur 4 caractères ($op)" if length($op) > 4;
+    die qq{Code opérateur avec espace à la fin ("$op")} if $op =~ /\s$/;
 
     $num =~ s/\A0//;
 
-    $op .= ' ' x (4 - length $op) if length $op < 4;
-    unless (exists $ops->[0]{$op}) {
-	#print "[$op]\n";
-	push @{ $ops->[1] }, $op;
-	my $count = scalar @{ $ops->[1] };
-	$ops->[0]{$op} = 4 * $count;
+    if (exists $op_num->{$op}) {
+	push @{ $op_num->{$op} }, $num;
+    } else {
+	$op_num->{$op} = [ $num ];
     }
-    $ops->[2]->add($num . ('.{' . $ops->[0]{$op} . '}'));
 }
 
 =head2 parse
@@ -138,17 +137,14 @@ sub ACTION_parse
     require Regexp::Assemble::Compressed;
     require Template;
 
-    my $re_0 = Regexp::Assemble::Compressed->new;
-    my $re_full = Regexp::Assemble::Compressed->new;
-    my $re_network = Regexp::Assemble::Compressed->new;
+    my $re_0 = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $re_full = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $re_network = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_network->add('1[578]', '11[259]', '116000');
-    my $re_pfx = Regexp::Assemble::Compressed->new;
+    my $re_pfx = Regexp::Assemble::Compressed->new(chomp => 0);
     $re_pfx->add('\+33', '0033', '(?:3651)?0');
-    my $ops = [
-        {},  # Operators
-        [],
-        Regexp::Assemble::Compressed->new,
-    ];
+    my $op_num = {};
+    my %op_count = ();
 
     my $wopnum_time = (stat WOPNUM)[9];
 
@@ -162,32 +158,73 @@ sub ACTION_parse
             when (/\A0/) {
                 my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
                 $re_0->add($num_re);
-                _add_op($ops,
-                        $worksheet->get_cell($row, $col0+2)->value,
+                my $op = $worksheet->get_cell($row, $col0+2)->value;
+                _add_op($op_num,
+                        $op,
                         $num_re);
+                $op_count{$op} += 10 ** (10-length);
             }
             when (/\A(?:[2-9]|16[0-9]{2})\z/) {
                 $re_pfx->add("(?:3651)?$_");
             }
             when (/\A3...\z/) {
                 $re_full->add($_);
-                _add_op($ops,
-                        $worksheet->get_cell($row, $col0+2)->value,
+                my $op = $worksheet->get_cell($row, $col0+2)->value;
+                _add_op($op_num,
+                        $op,
                         $_.('_'x5));
+                $op_count{$op}++;
             }
 	    when (/\A1/) { $re_network->add($_); }
         }
     }
 
     my $re_all = Regexp::Assemble::Compressed->new;
-    $re_all->add($re_network, $re_full, "$re_pfx$re_0");
+    $re_all->add("$re_network|$re_full|$re_pfx(?:$re_0)");
+    #$re_all->add($re_network, $re_full, "$re_pfx(?:$re_0)");
+    #$re_all->add($re_network);
+    #$re_all->add($re_full);
+    #$re_all->add("$re_pfx$re_0");
+    #eval 'qr/'.$re_network->as_string.'/;1' or die $@;
+    #eval 'qr/'.$re_full->as_string.'/;1' or die $@;
+    eval 'qr/'.$re_all->as_string.'/;1' or die $@;
 
-    my $re_ops = $ops->[2]->as_string;
-    $re_ops =~ s/\A\(?:/(/ or $re_ops = "($re_ops)";
+    # Trie les opérateurs par ordre décroissant du nombre de numéros gérés
+    my @ops = sort { $op_count{$b} <=> $op_count{$a} || $a cmp $b } keys %op_count;
+    # Affiche le top 14
+    printf(scalar( "%9s  "x 7 ."\n"."%9d  "x 7 ."\n" ) x 2,
+	   @ops[0..6], @op_count{@ops[0..6]},
+	   @ops[7..13], @op_count{@ops[7..13]});
+    undef %op_count;
+
+    # Compte le nombre de blocs de numéro pour chaque opérateur
+    my %blocks_count = map { ($_ => scalar @{$op_num->{$_}}) } keys %$op_num;
+    # Trie les opérateurs par ordre décroissant du nombre de blocs gérés
+    # Ceci donne une regexp plus courte (".{4}" < ".{324}")
+    @ops = sort { $blocks_count{$b} <=> $blocks_count{$a} || $a cmp $b } keys %blocks_count;
+    undef %blocks_count;
+
+    my $re_ops = Regexp::Assemble::Compressed->new(chomp => 0);
+    my $n = 0;
+    foreach my $op (@ops) {
+	$n += 4;
+	my $suffix = ".{$n}";
+	foreach my $num (sort @{delete $op_num->{$op}}) {
+	    $re_ops->add($num . $suffix);
+	}
+    }
+    undef $op_num;
+
+    $re_ops = $re_ops->as_string;
+    # Supprime "(?:"...")" redondant avec "("...")" que l'on ajoute après
+    $re_ops =~ s/^\(\?:// && $re_ops =~ s/\)$//;
+
+
+    # Nettoyage du résultat boggué de Regexp::Assemble :
+    #  remplace "\d" par "[0-9]" (car pas équivalent dans le monde Unicode)
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
-	    print "$re\n";
 	    $re
 	} ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all);
 
@@ -204,7 +241,7 @@ sub ACTION_parse
         RE_PFX => $re_pfx,
         RE_SUBSCRIBER => $re_subscriber,
         RE_OPERATOR => $re_ops,
-        STR_OPERATORS => join('', @{ $ops->[1] }),
+        STR_OPERATORS => join('', map { 4 == length($_) ? $_ : $_.(' 'x(4-length $_)) } @ops),
     );
 
     my $tt2 = Template->new(
@@ -217,7 +254,7 @@ sub ACTION_parse
 
     print "Checking source code validity...\n";
     my $exit_status = system $^X $^X, qw/-Ilib -MNumber::Phone::FR=Full -e1/;
-    ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status";
+    ($exit_status >> 8 == 0) or die "Erreur de validation du source genere: $exit_status\n";
     if ($version ne $self->dist_version) {
 	# Force a "./Build" deprecation (redo "perl Build.PL")
 	# as the distribution must be rebuilt

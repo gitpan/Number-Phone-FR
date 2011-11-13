@@ -7,7 +7,7 @@ package Number::Phone::FR;
 # $VERSION is limited to 2 digits after the dot
 # Other digits are reserved for ARCEP data versonning
 # in Number::Phone::FR::Full
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 use Number::Phone;
 use parent 'Number::Phone';
@@ -25,11 +25,9 @@ sub import
     croak "invalid sub-class" unless $class->isa(__PACKAGE__);
     if ($class eq __PACKAGE__) {
         if (@_) {
-            foreach my $impl (@_) {
-                $class = $impl;
-                $class =~ s/^:?(.)/\U$1/;
-                substr($class, 0, 0) = __PACKAGE__.'::';
-            }
+            $class = $_[0];
+            $class =~ s/^:?(.)/\U$1/;
+            substr($class, 0, 0) = __PACKAGE__.'::';
 
             my $level = 0;
             my $pkg;
@@ -39,7 +37,7 @@ sub import
             $pkg2impl{$pkg} = $class;
 
             # Load the class
-            eval "require $class";
+            eval "require $class; 1" or croak "$@\n";
             $class->isa(__PACKAGE__) or croak "$class is not a valid class";
         }
     } else {
@@ -326,6 +324,10 @@ sub format
 package Number::Phone::FR::Simple;
 
 use parent 'Number::Phone::FR';
+
+BEGIN {
+    $INC{'Number/Phone/FR/Simple.pm'} = __FILE__;
+}
 
 1;
 __END__

@@ -1,5 +1,6 @@
 Build.PL
 Changes
+examples/format.pl
 examples/verif-num.pl
 inc/Build/Author.pm
 inc/Build/Number-Phone-FR-Full.tt2
@@ -10,6 +11,7 @@ MANIFEST			This list of files
 MANIFEST.SKIP
 META.json
 META.yml
+README
 t/00-compile.t
 t/01-load-FR.t
 t/02-load-Simple.t
@@ -22,4 +24,7 @@ t/20-format.t
 t/21-format-full.t
 t/30-operator-full.t
 t/40-impl.t
+t/90-pod.t
+t/91-pod-coverage.t
+t/92-kwalitee.t
 t/lib/Numeros.pm

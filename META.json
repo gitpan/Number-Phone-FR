@@ -39,11 +39,11 @@
    "provides" : {
       "Number::Phone::FR" : {
          "file" : "lib/Number/Phone/FR.pm",
-         "version" : "0.05"
+         "version" : "0.06"
       },
       "Number::Phone::FR::Full" : {
          "file" : "lib/Number/Phone/FR/Full.pm",
-         "version" : "0.0511217"
+         "version" : "0.0611311"
       },
       "Number::Phone::FR::Simple" : {
          "file" : "lib/Number/Phone/FR.pm",
@@ -60,5 +60,5 @@
          "url" : "https://github.com/dolmen/p5-Number-Phone-FR.git"
       }
    },
-   "version" : "0.0511217"
+   "version" : "0.0611311"
 }
