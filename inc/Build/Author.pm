@@ -48,6 +48,11 @@ my %build_requires = (
     'Spreadsheet::ParseExcel' => 0,
     'Regexp::Assemble' => 0,
     'Template' => 0,
+    'Test::MinimumVersion' => 0,
+    'Regexp::Parser' => '0.21',
+    'Test::Pod' => 0,
+    'Test::Pod::Coverage' => 0,
+    'Test::Kwalitee' => 0,
 );
 
 sub ACTION_installdeps
@@ -136,6 +141,7 @@ sub ACTION_parse
     require Spreadsheet::ParseExcel;
     require Regexp::Assemble::Compressed;
     require Template;
+    require Regexp::Parser;
 
     my $re_0 = Regexp::Assemble::Compressed->new(chomp => 0);
     my $re_full = Regexp::Assemble::Compressed->new(chomp => 0);
@@ -217,7 +223,7 @@ sub ACTION_parse
 
     $re_ops = $re_ops->as_string;
     # Supprime "(?:"...")" redondant avec "("...")" que l'on ajoute après
-    $re_ops =~ s/^\(\?:// && $re_ops =~ s/\)$//;
+    $re_ops =~ s/^\(\?^?:// && $re_ops =~ s/\)$//;
 
 
     # Nettoyage du résultat boggué de Regexp::Assemble :
@@ -225,6 +231,8 @@ sub ACTION_parse
     ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all) = map {
             my $re = ref $_ ? $_->as_string : $_;
 	    $re =~ s/\\d/[0-9]/g;
+	    # Compatibilité perl 5.8
+	    $re =~ s/\Q(?^:/(?:/g;
 	    $re
 	} ($re_0, $re_full, $re_network, $re_pfx, $re_ops, $re_all);
 
@@ -243,6 +251,14 @@ sub ACTION_parse
         RE_OPERATOR => $re_ops,
         STR_OPERATORS => join('', map { 4 == length($_) ? $_ : $_.(' 'x(4-length $_)) } @ops),
     );
+
+    # Vérifie que les RE sont compatibles perl 5.8.4
+    my $re_parser = Regexp::Parser->new;
+    foreach (grep /^RE_/, keys %vars) {
+	unless ($re_parser->regex($vars{$_})) {
+	    warn sprintf("%s: %s\n", $_, $re_parser->errmsg);
+	}
+    }
 
     my $tt2 = Template->new(
     );
