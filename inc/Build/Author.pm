@@ -25,6 +25,8 @@ donnE<eacute>es les plus rE<eacute>centes de l'ARCEP.
 =cut
 
 use feature 'switch';
+use experimental 'smartmatch';
+
 use Module::Build;
 our @ISA;
 BEGIN {
@@ -32,12 +34,14 @@ BEGIN {
 }
 
 
-sub WOPNUM() { 'wopnum.xls' }
+sub GELNUM() { 'gelnum.xls' }
+sub MAJNUM() { 'majnum.xls' }
+sub MAJSDT() { 'majsdt.xls' }
 
 sub new
 {
     my $self = $_[0]->SUPER::new(@_[1..$#_]);
-    $self->add_to_cleanup(WOPNUM);
+    $self->add_to_cleanup(MAJNUM);
     return $self;
 }
 
@@ -107,7 +111,9 @@ L<http://www.arcep.fr/fileadmin/wopnum.xls>
 sub ACTION_fetch
 {
     my $self = shift;
-    $self->_fetch('http://www.arcep.fr/fileadmin/wopnum.xls', WOPNUM);
+    $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=Qov2Ms0K3nI%3d&tabid=217&portalid=0&mid=850', GELNUM);
+    $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=PBA1WK-wnOU%3d&tabid=217&portalid=0&mid=850', MAJNUM);
+    $self->_fetch('https://extranet.arcep.fr/portail/LinkClick.aspx?fileticket=du7yxSdf91o%3d&tabid=217&portalid=0&mid=850', MAJSDT);
     $self->_fetch('https://libphonenumber.googlecode.com/svn/trunk/resources/geocoding/fr/33.txt', 'libphonenumber-33.txt');
     return 1;
 }
@@ -138,7 +144,7 @@ Lit le fichier L<wopnum.xls> et construit L<Number::Phone::FR:Full>.
 sub ACTION_parse
 {
     my $self = shift;
-    -f WOPNUM or $self->SUPER::depends_on('fetch');
+    (-f MAJNUM && -f MAJSDT) or $self->SUPER::depends_on('fetch');
     require Spreadsheet::ParseExcel;
     require Regexp::Assemble::Compressed;
     require Template;
@@ -153,10 +159,10 @@ sub ACTION_parse
     my $op_num = {};
     my %op_count = ();
 
-    my $wopnum_time = (stat WOPNUM)[9];
+    my $wopnum_time = (stat MAJNUM)[9];
 
     my $parser = Spreadsheet::ParseExcel->new;
-    my $worksheet = $parser->parse(WOPNUM)->worksheet(0);
+    my $worksheet = $parser->parse(MAJNUM)->worksheet(0);
     my ($min_row, $max_row) = $worksheet->row_range;
     my ($col0, undef) = $worksheet->col_range;
     print "$max_row lignes.\n";
@@ -165,18 +171,18 @@ sub ACTION_parse
             when (/\A0/) {
                 my $num_re = substr($_, 1).('[0-9]'x(10-length($_)));
                 $re_0->add($num_re);
-                my $op = $worksheet->get_cell($row, $col0+2)->value;
+                my $op = $worksheet->get_cell($row, $col0+3)->value;
                 _add_op($op_num,
                         $op,
                         $num_re);
                 $op_count{$op} += 10 ** (10-length);
             }
             when (/\A(?:[2-9]|16[0-9]{2})\z/) {
-                $re_pfx->add("(?:3651)?$_");
+                die "operator prefixes are now in MAJSDT.XLS\n"
             }
             when (/\A3...\z/) {
                 $re_full->add($_);
-                my $op = $worksheet->get_cell($row, $col0+2)->value;
+                my $op = $worksheet->get_cell($row, $col0+3)->value;
                 _add_op($op_num,
                         $op,
                         $_.('_'x5));
@@ -185,6 +191,20 @@ sub ACTION_parse
 	    when (/\A1/) { $re_network->add($_); }
         }
     }
+    undef $worksheet;
+
+    # Fichier des préfixes opérateurs
+    $worksheet = $parser->parse(MAJSDT)->worksheet(0);
+    ($min_row, $max_row) = $worksheet->row_range;
+    ($col0, undef) = $worksheet->col_range;
+    for my $row ($min_row+1..$max_row) {
+	my $num = $worksheet->get_cell($row, $col0)->value;
+	$num =~ s/ //g;
+        my $op = $worksheet->get_cell($row, $col0+3)->value;
+        $re_pfx->add("(?:3651)?$num");
+    }
+    undef $worksheet;
+    undef $parser;
 
     my $re_all = Regexp::Assemble::Compressed->new;
     $re_all->add("$re_network|$re_full|$re_pfx(?:$re_0)");
@@ -324,3 +344,6 @@ L<http://www.arcep.fr/>
 
 Olivier MenguE<eacute>, C<<<dolmen@cpan.org>>>
 
+=cut
+
+# :vim:set et stw=4:
